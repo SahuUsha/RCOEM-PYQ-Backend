@@ -15,7 +15,7 @@ class Question(Base):
     year = Column(Integer)
 
     exam_type = Column(Text)
-
+        
     semester = Column(Text)
 
     marks = Column(String)

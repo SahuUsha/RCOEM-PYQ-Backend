@@ -40,13 +40,12 @@ def upload_pdf(file: UploadFile = File(...)):
                 print("Skipping empty question")
                 continue
 
-            # For embedding, use main_text if available, else concat subquestions
             embedding_text = main_text or " ".join([sq.get("text", "") for sq in subquestions])
 
             marks = str(q.get("marks") or "")
 
             saved_question = save_question(
-                question_text=q,  # store full JSON
+                question_text=q, 
                 subject=q.get("subject"),
                 year=q.get("year"),
                 semester=q.get("semester"),
@@ -78,7 +77,7 @@ def upload_pdf(file: UploadFile = File(...)):
 
             saved_count += 1
             
-        print("Questions returned from Gemini:", len(questions))
+        print("Questions returned:", len(questions))
         
         return {
             "message": "PDF processed successfully",
