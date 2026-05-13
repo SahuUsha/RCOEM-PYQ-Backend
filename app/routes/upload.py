@@ -1,19 +1,29 @@
 import os
 import shutil
 import json
-from fastapi import APIRouter, UploadFile, File, HTTPException
-
 from app.services.pdf_services import extract_questions
 from app.services.db_service import save_question
 from app.services.qdrant_service import insert_vector
 from app.services.embedding import generate_embedding
-
+from app.services.auth_service import get_current_user
+from app.models import User
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 
 router = APIRouter()
 
+MAX_FILE_SIZE = 10 * 1024 * 1024 # 10MB
 
 @router.post("/upload")
-def upload_pdf(file: UploadFile = File(...)):
+def upload_pdf(
+    file: UploadFile = File(...), 
+    current_user: User = Depends(get_current_user)
+):
+    # Basic Security Checks
+    if file.content_type != "application/pdf":
+        raise HTTPException(status_code=400, detail="Only PDF files are allowed")
+    
+    # We could check size here if needed, but FastAPI reads into memory for small files 
+    # and SpooledTemporaryFile for larger ones.
 
     file_path = f"temp_{file.filename}"
 
