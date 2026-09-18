@@ -74,15 +74,15 @@
 
 import os
 import json
-import google.generativeai as genai
+from google import genai
 import re
 from dotenv import load_dotenv
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-model = genai.GenerativeModel("gemini-2.5-flash")
+model = client.models
 
 
 PROMPT = """
@@ -230,8 +230,9 @@ def extract_metadata_from_pdf(pdf_bytes):
     Return plain text only.
     """
 
-    response = model.generate_content(
-        [
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=[
             {"mime_type": "application/pdf", "data": pdf_bytes},
             META_PROMPT
         ]
@@ -266,8 +267,9 @@ def parse_pdf_with_gemini(file_path):
         print("📌 METADATA:", metadata)
 
         # 🔥 STEP 2: Extract questions
-        response = model.generate_content(
-            [
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[
                 {"mime_type": "application/pdf", "data": pdf_bytes},
                 PROMPT
             ]

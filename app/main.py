@@ -27,3 +27,6 @@ app.include_router(search.router, tags=["Search"])
 app.include_router(filter_routes.router, tags=["Filters"])
 app.include_router(contact_routes.router, tags=["Contact"])
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
